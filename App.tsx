@@ -90,7 +90,8 @@ function App() {
   const handleReset = () => {
     if (window.confirm("Êtes-vous sûr de vouloir recommencer ? Votre progression sera perdue.")) {
       localStorage.removeItem(LOCAL_STORAGE_KEY);
-      setGameState(INITIAL_GAME_STATE);
+      // Use a deep copy of the initial state to prevent any potential mutation issues
+      setGameState(JSON.parse(JSON.stringify(INITIAL_GAME_STATE)));
       setProfitHistory([]);
       setToasts([]);
       setInfoMessages([]);

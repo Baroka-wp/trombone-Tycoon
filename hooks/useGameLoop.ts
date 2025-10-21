@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { GameState } from '../types';
 import { 
   GAME_TICK_MS, 
-  EVENT_CHANCE_PER_TICK,
   BASE_DEMAND, 
   IDEAL_PRICE, 
   TROMBONES_PER_LINE_PER_WORKER,
@@ -33,16 +32,22 @@ export const useGameLoop = (
 
       // --- 1. Handle Random Events ---
       if (newState.activeEvent) {
-        // Create a new object for the active event to avoid direct mutation
+        // Event is active, decrement its duration
         newState.activeEvent = { ...newState.activeEvent, durationRemaining: newState.activeEvent.durationRemaining - 1 };
         
         if (newState.activeEvent.durationRemaining <= 0) {
+          // Event just ended
           newAlerts.push(`✅ Événement terminé : ${newState.activeEvent.title}`);
           newState.activeEvent = null;
+
+          // Schedule the next event
+          const minCooldown = 40;
+          const windowSize = 30; // 70 - 40
+          newState.nextEventCycle = newState.gameCycle + minCooldown + Math.floor(Math.random() * windowSize);
         }
       } else {
-        // Try to trigger a new event
-        if (Math.random() < EVENT_CHANCE_PER_TICK) {
+        // No active event, check if it's time to trigger a new one
+        if (newState.gameCycle >= newState.nextEventCycle) {
           const eventTemplate = RANDOM_EVENTS[Math.floor(Math.random() * RANDOM_EVENTS.length)];
           newState.activeEvent = {
             ...eventTemplate,
@@ -50,6 +55,9 @@ export const useGameLoop = (
           };
           const icon = newState.activeEvent.type === 'positive' ? '🎉' : '💥';
           newAlerts.push(`${icon} Nouvel événement : ${newState.activeEvent.title}`);
+          
+          // Set nextEventCycle to infinity to prevent re-triggering until the current event ends
+          newState.nextEventCycle = Infinity;
         }
       }
 

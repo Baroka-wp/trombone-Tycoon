@@ -1,8 +1,7 @@
 import { GameState } from './types';
 
-export const GAME_TICK_MS = 1500; // 1.5 seconds per game cycle
+export const GAME_TICK_MS = 2000; // 2 seconds per game cycle
 export const MAX_PROFIT_HISTORY = 50;
-export const EVENT_CHANCE_PER_TICK = 0.04; // 4% chance per tick
 
 // --- Initial State ---
 export const INITIAL_GAME_STATE: GameState = {
@@ -28,6 +27,7 @@ export const INITIAL_GAME_STATE: GameState = {
   unmetDemand: 0,
   alerts: ["Bienvenue chez Magnat du Trombone ! Embauchez des employés et achetez des lignes pour démarrer la production."],
   activeEvent: null,
+  nextEventCycle: 40 + Math.floor(Math.random() * 30), // Schedule first event between cycle 40-70
 };
 
 

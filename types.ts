@@ -38,6 +38,7 @@ export interface GameState {
   unmetDemand: number;
   alerts: string[];
   activeEvent: RandomEvent | null;
+  nextEventCycle: number;
 }
 
 export interface ProfitData {
